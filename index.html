@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appealing Interactive Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #calculator {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px auto;
+            width: 350px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .button {
+            padding: 20px 25px; /* Increased padding */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 5px;
+            color: #fff;
+            background-color: #f44336; /* Red */
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            opacity: 0.8;
+        }
+
+        .operator {
+            background-color: #ff5722; /* Orange */
+            padding: 20px 25px; /* Increased padding */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 5px;
+            color: #fff;
+            background-color: #f44336; /* Red */
+            transition: background-color 0.3s ease;
+        }
+
+        .function {
+            background-color: #4caf50; /* Green */
+            padding: 20px 25px; /* Increased padding */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 5px;
+            color: #fff;
+            background-color: #f44336; /* Red */
+            transition: background-color 0.3s ease;
+        }
+
+        #display {
+            width: calc(100% - 40px);
+            padding: 20px;
+            font-size: 24px;
+            background-color: #eee;
+            border: none;
+            text-align: right;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 10px;
+        }
+
+        #display.error {
+            background-color: #f9f9f9;
+        }
+
+        .row {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Calculator</h1>
+    <div id="calculator">
+        <div id="display"></div>
+        <div class="row">
+            <button class="button" onclick="appendNumber('7')">7</button>
+            <button class="button" onclick="appendNumber('8')">8</button>
+            <button class="button" onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('/')">/</button>
+        </div>
+        <div class="row">
+            <button class="button" onclick="appendNumber('4')">4</button>
+            <button class="button" onclick="appendNumber('5')">5</button>
+            <button class="button" onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('*')">x</button> <!-- Changed to 'x' for multiplication -->
+        </div>
+        <div class="row">
+            <button class="button" onclick="appendNumber('1')">1</button>
+            <button class="button" onclick="appendNumber('2')">2</button>
+            <button class="button" onclick="appendNumber('3')">3</button>
+            <button class="operator" onclick="appendOperator('-')">-</button>
+        </div>
+        <div class="row">
+            <button class="button" onclick="appendNumber('0')">0</button>
+            <button class="function" onclick="clearDisplay()">C</button>
+            <button class="operator" onclick="calculate()" style="background-color: #4caf50;">=</button> <!-- Green -->
+            <button class="function" onclick="appendOperator('.')">.</button>
+        </div>
+        <div class="row">
+            <button class="function" onclick="appendOperator('+')">+</button>
+        </div>
+    </div>
+
+
+   <script>
+        const displayEl = document.getElementById('display');
+        let currentNumber = '';
+        let previousNumber = null;
+        let operation = null;
+
+        function appendNumber(number) {
+            displayEl.textContent += number;
+            currentNumber += number;
+        }
+
+        function appendOperator(operator) {
+            if (currentNumber !== '') {
+                previousNumber = parseFloat(currentNumber);
+                operation = operator;
+                currentNumber = '';
+            }
+        }
+
+        function clearDisplay() {
+            displayEl.textContent = '';
+            currentNumber = '';
+            previousNumber = null;
+            operation = null;
+        }
+
+        function calculate() {
+            if (operation === null || currentNumber === '') {
+                displayEl.classList.add('error');
+                setTimeout(() => displayEl.classList.remove('error'), 1000);
+                return;
+            }
+
+            try {
+                const result = operate(previousNumber, currentNumber, operation);
+                displayEl.textContent = result;
+                previousNumber = result;
+                currentNumber = '';
+                operation = null;
+            } catch (error) {
+                displayEl.textContent = 'Error';
+                displayEl.classList.add('error');
+                setTimeout(() => displayEl.classList.remove('error'), 1000);
+                currentNumber = '';
+                previousNumber = null;
+                operation = null;
+            }
+        }
+
+        function operate(a, b, operator) {
+            a = parseFloat(a);
+            b = parseFloat(b);
+            switch (operator) {
+                case '+':
+                    return a + b;
+                case '-':
+                    return a - b;
+                case '*':
+                    return a * b;
+                case '/':
+                    if (b === 0) {
+                        throw new Error('Division by zero');
+                    }
+                    return a / b;
+                default:
+                    throw new Error('Invalid operator');
+            }
+        }
+    </script>
+
+</body>
+</html>
